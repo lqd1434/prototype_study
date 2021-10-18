@@ -24,7 +24,6 @@ class MyPromise {
 				this.reason = reason
 			}
 		}
-
 		try {
 			executor(resolve,reject)
 		} catch (e) {
