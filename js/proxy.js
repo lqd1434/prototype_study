@@ -14,7 +14,8 @@ const handler = {
 	 * @param proxy 第三个是代理对象
 	 */
 	get(targetObj, key,proxy){
-		return targetObj[key]+'handle'
+		return Reflect.get(...arguments)
+		// return targetObj[key]+'handle'
 		// console.log(targetObj, key,proxy,'get')
 	},
 	/**
@@ -26,13 +27,16 @@ const handler = {
 	set(targetObj,key,value,proxy){
 		console.log(value,'set')
 		targetObj[key] = value
+		return Reflect.set(...arguments)
 		// return value
-	}
+	},
 }
 
 const proxy = new Proxy(target,handler)
 
-console.log(proxy.a)
-proxy.a = 3
-console.log(target.a)
-console.log(proxy.a)
+console.log(proxy.a,'preChange')
+console.log(proxy.a = 3);
+console.log(target.a,'target')
+console.log(proxy.a,'proxy')
+
+console.log('a' in target)
