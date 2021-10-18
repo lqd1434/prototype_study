@@ -10,11 +10,16 @@ class MyPromise {
 		this.status = Status.PENDING
 		this.value = undefined
 		this.reason = undefined
+		this.resolveCallback = []
+		this.rejectedCallback = []
 
 		const resolve=(value)=>{
 			if (this.status === Status.PENDING){
 				this.status = Status.FULFILLED
 				this.value = value
+				this.resolveCallback.forEach((callback)=>{
+					callback()
+				})
 			}
 		}
 
@@ -22,6 +27,9 @@ class MyPromise {
 			if (this.status === Status.PENDING){
 				this.status = Status.REJECTED
 				this.reason = reason
+				this.rejectedCallback.forEach((callback)=>{
+					callback()
+				})
 			}
 		}
 		try {
@@ -33,10 +41,19 @@ class MyPromise {
 
 	then(onFulfilled, onRejected){
 		if (this.status === Status.FULFILLED){
+			//同步
 			onFulfilled(this.value)
-		}
-		if (this.status === Status.REJECTED){
+		} else if (this.status === Status.REJECTED){
+			//同步
 			onRejected(this.reason)
+		} else {
+			//异步
+			this.resolveCallback.push(()=>{
+				onFulfilled(this.value)
+			})
+			this.rejectedCallback.push(()=>{
+				onRejected(this.reason)
+			})
 		}
 	}
 }
